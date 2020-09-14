@@ -106,7 +106,8 @@ fun thirdDigit(number: Int): Int = (number / 100) % 10
  * прибыл на станцию назначения в h2 часов m2 минут того же дня (например в 13:01).
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
-fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int = hoursArrive * 60 + minutesArrive - hoursDepart * 60 - minutesDepart
+fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int = (hoursArrive * 60 + minutesArrive) -
+        (hoursDepart * 60 + minutesDepart)
 
 /**
  * Простая (2 балла)
@@ -115,7 +116,10 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
-fun accountInThreeYears(initial: Int, percent: Int): Double = initial * (1 + percent / 100.0) * (1 + percent / 100.0) * (1 + percent / 100.0)
+fun accountInThreeYears(initial: Int, percent: Int): Double {
+    val coefficient = 1 + (percent / 100.0)
+    return coefficient.pow(3) * initial
+}
 
 /**
  * Простая (2 балла)
