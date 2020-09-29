@@ -307,8 +307,8 @@ fun fibSequenceDigit(n: Int): Int {
         for (i in 1..digitNumber(fib(index))) {
             if (count > 1) count--
             else {
-                result = digitInNumber(i, fib(index))
                 count--
+                result = digitInNumber(i, fib(index))
                 break
             }
         }
