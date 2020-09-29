@@ -146,7 +146,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     maximum = max(maximum, c)
     var minimum = min(a, b)
     minimum = min(minimum, c)
-    val medium = a + b + c - maximum - minimum
+    val medium = a + b + c - (maximum + minimum)
     if (maximum >= minimum + medium) return -1
     val sum = sqr(minimum) + sqr(medium)
     return when {

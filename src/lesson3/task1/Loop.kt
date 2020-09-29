@@ -253,7 +253,7 @@ fun cos(x: Double, eps: Double): Double = TODO()
 fun squareSequenceDigit(n: Int): Int {
     fun digitInNumber(i: Int, m: Int): Int {
         var sqr = m
-        var k = 1
+        var k: Long = 1
         for (l in 1..i) k *= 10
         while (sqr > k) {
             sqr /= 10
@@ -291,7 +291,7 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     fun digitInNumber(i: Int, m: Int): Int {
         var fibon = m
-        var k = 1
+        var k: Long = 1
         for (l in 1..i) k *= 10
         while (fibon > k) {
             fibon /= 10
