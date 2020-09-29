@@ -293,7 +293,7 @@ fun fibSequenceDigit(n: Int): Int {
         var fibon = m
         var k: Long = 1
         for (l in 1..i) k *= 10
-        while (fibon > k) {
+        while (fibon >= k) {
             fibon /= 10
         }
         return fibon % 10
