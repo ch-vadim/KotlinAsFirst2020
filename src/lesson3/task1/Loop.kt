@@ -2,6 +2,8 @@
 
 package lesson3.task1
 
+import lesson1.task1.sqr
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -72,7 +74,15 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = TODO()
+fun digitNumber(n: Int): Int {
+    var num = n
+    var count = 0
+    do {
+        count++
+        num /= 10
+    } while (abs(num) > 0)
+    return count
+}
 
 /**
  * Простая (2 балла)
@@ -80,21 +90,44 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    when (n) {
+        1, 2 -> return 1
+    }
+    var fib1 = 1
+    var fib2 = 1
+    var fibSum = 0
+    for (i in 1..n - 2) {
+        fibSum = fib1 + fib2
+        fib1 = fib2
+        fib2 = fibSum
+    }
+    return fibSum
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) return i
+    }
+    return n
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    for (i in (n - 1) downTo sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) return i
+    }
+    return 1
+}
 
 /**
  * Простая (2 балла)
@@ -147,7 +180,15 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var c = 0
+    var num = n
+    while (num > 0) {
+        c = c * 10 + num % 10
+        num /= 10
+    }
+    return c
+}
 
 /**
  * Средняя (3 балла)
@@ -158,7 +199,7 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя (3 балла)
@@ -168,7 +209,14 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var num = n
+    while (num > 10) {
+        if ((num % 10) != (num / 10 % 10)) return true
+        num /= 10
+    }
+    return false
+}
 
 /**
  * Средняя (4 балла)
@@ -179,6 +227,7 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
+
 fun sin(x: Double, eps: Double): Double = TODO()
 
 /**
@@ -201,7 +250,34 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    fun digitInNumber(i: Int, m: Int): Int {
+        var sqr = m
+        var k = 1
+        for (l in 1..i) k *= 10
+        while (sqr > k) {
+            sqr /= 10
+        }
+        return sqr % 10
+    }
+
+    var count = n
+    var index = 0
+    var result = 0
+    while (count > 0) {
+        index++
+        for (i in 1..digitNumber(sqr(index))) {
+            if (count > 1) count--
+            else {
+                result = digitInNumber(i, sqr(index))
+                count--
+                break
+            }
+        }
+    }
+    return result
+
+}
 
 /**
  * Сложная (5 баллов)
@@ -212,4 +288,30 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    fun digitInNumber(i: Int, m: Int): Int {
+        var fibon = m
+        var k = 1
+        for (l in 1..i) k *= 10
+        while (fibon > k) {
+            fibon /= 10
+        }
+        return fibon % 10
+    }
+
+    var count = n
+    var index = 0
+    var result = 0
+    while (count > 0) {
+        index++
+        for (i in 1..digitNumber(fib(index))) {
+            if (count > 1) count--
+            else {
+                result = digitInNumber(i, fib(index))
+                count--
+                break
+            }
+        }
+    }
+    return result
+}
