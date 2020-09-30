@@ -11,6 +11,17 @@ import kotlin.math.sqrt
 // Рекомендуемое количество баллов = 7
 // Вместе с предыдущими уроками = 16/21
 
+//Для последующих функций
+fun digitInNumber(i: Int, m: Int): Int {
+    var f = m
+    var k = 1L
+    for (l in 1..i) k *= 10
+    while (f >= k) {
+        f /= 10
+    }
+    return f % 10
+}
+
 /**
  * Пример
  *
@@ -251,28 +262,18 @@ fun cos(x: Double, eps: Double): Double = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    fun digitInNumber(i: Int, m: Int): Int {
-        var sqr = m
-        var k: Long = 1
-        for (l in 1..i) k *= 10
-        while (sqr > k) {
-            sqr /= 10
-        }
-        return sqr % 10
-    }
-
     var count = n
     var index = 0
     var result = 0
     while (count > 0) {
         index++
         for (i in 1..digitNumber(sqr(index))) {
-            if (count > 1) count--
-            else {
+            if (count == 1) {
                 result = digitInNumber(i, sqr(index))
                 count--
                 break
             }
+            count--
         }
     }
     return result
@@ -289,28 +290,18 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    fun digitInNumber(i: Int, m: Int): Int {
-        var fibon = m
-        var k: Long = 1
-        for (l in 1..i) k *= 10
-        while (fibon >= k) {
-            fibon /= 10
-        }
-        return fibon % 10
-    }
-
     var count = n
     var index = 0
     var result = 0
     while (count > 0) {
         index++
         for (i in 1..digitNumber(fib(index))) {
-            if (count > 1) count--
-            else {
-                count--
+            if (count == 1) {
                 result = digitInNumber(i, fib(index))
+                count--
                 break
             }
+            count--
         }
     }
     return result

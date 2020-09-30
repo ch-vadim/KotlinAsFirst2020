@@ -5,7 +5,6 @@ package lesson2.task1
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -72,13 +71,11 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String {
     val lastDigit = age % 10
-    if ((age % 100) in 10..19) return "$age лет"
-    return when (lastDigit) {
-        5, 6, 7, 8, 9, 0 -> "$age лет"
-        2, 3, 4 -> "$age года"
-        else -> {
-            "$age год"
-        }
+    return when {
+        age % 100 in 11..19 -> "$age лет"
+        lastDigit in 5..9 || lastDigit == 0 -> "$age лет"
+        lastDigit in 2..4 -> "$age года"
+        else -> "$age год"
     }
 }
 
@@ -108,15 +105,11 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int {
-    if ((kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2))
-        return 3
-    if (kingX == rookX1 || kingY == rookY1)
-        return 1
-    if (kingX == rookX2 || kingY == rookY2)
-        return 2
-    else
-        return 0
+): Int = when {
+    (kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2) -> 3
+    kingX == rookX1 || kingY == rookY1 -> 1
+    kingX == rookX2 || kingY == rookY2 -> 2
+    else -> 0
 }
 
 /**
@@ -144,16 +137,14 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    var maximum = max(a, b)
-    maximum = max(maximum, c)
-    var minimum = min(a, b)
-    minimum = min(minimum, c)
-    val medium = a + b + c - (maximum + minimum)
-    if (maximum >= minimum + medium) return -1
-    val sum = sqr(minimum) + sqr(medium)
+    val max = maxOf(a, b, c)
+    val min = minOf(a, b, c)
+    val med = a + b + c - (max + min)
+    if (max >= min + med) return -1
+    val sum = sqr(min) + sqr(med)
     return when {
-        sqr(maximum) > sum -> 2
-        sqr(maximum) < sum -> 0
+        sqr(max) > sum -> 2
+        sqr(max) < sum -> 0
         else -> 1
     }
 }
@@ -167,13 +158,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    if ((c >= a) && (d >= b) && (b >= c))
+    if (c >= a && d >= b && b >= c)
         return b - c
-    if ((a >= c) && (b >= d) && (d >= a))
+    if (a >= c && b >= d && d >= a)
         return d - a
-    if ((a >= c) && (d >= b))
+    if (a >= c && d >= b)
         return b - a
-    if ((c >= a) && (b >= d))
+    if (c >= a && b >= d)
         return d - c
     return -1
 }
