@@ -76,7 +76,9 @@ fun ageDescription(age: Int): String {
     return when (lastDigit) {
         5, 6, 7, 8, 9, 0 -> "$age лет"
         2, 3, 4 -> "$age года"
-        else -> "$age год"
+        else -> {
+            "$age год"
+        }
     }
 }
 
