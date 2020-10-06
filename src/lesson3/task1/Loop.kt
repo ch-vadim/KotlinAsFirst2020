@@ -12,15 +12,26 @@ import kotlin.math.sqrt
 // Вместе с предыдущими уроками = 16/21
 
 //Для последующих функций
+fun powForLong(n: Long, i: Int): Long {
+    var l = i
+    var res = n
+    while (l > 1) {
+        res *= n
+        l -= 1
+    }
+    return res
+}
+
 fun digitInNumber(i: Int, m: Int): Int {
     var f = m
-    var k = 1L
-    for (l in 1..i) k *= 10
+    var k = 10L
+    k = powForLong(k, i)
     while (f >= k) {
         f /= 10
     }
     return f % 10
 }
+
 
 /**
  * Пример
@@ -264,20 +275,12 @@ fun cos(x: Double, eps: Double): Double = TODO()
 fun squareSequenceDigit(n: Int): Int {
     var count = n
     var index = 0
-    var result = 0
     while (count > 0) {
         index++
-        for (i in 1..digitNumber(sqr(index))) {
-            if (count == 1) {
-                result = digitInNumber(i, sqr(index))
-                count--
-                break
-            }
-            count--
-        }
+        count -= digitNumber(sqr(index))
     }
-    return result
-
+    count += digitNumber(sqr(index))
+    return digitInNumber(count, sqr(index))
 }
 
 /**
@@ -292,17 +295,10 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     var count = n
     var index = 0
-    var result = 0
     while (count > 0) {
         index++
-        for (i in 1..digitNumber(fib(index))) {
-            if (count == 1) {
-                result = digitInNumber(i, fib(index))
-                count--
-                break
-            }
-            count--
-        }
+        count -= digitNumber(fib(index))
     }
-    return result
+    count += digitNumber(fib(index))
+    return digitInNumber(count, fib(index))
 }
