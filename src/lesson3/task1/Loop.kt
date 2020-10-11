@@ -24,8 +24,7 @@ fun powForLong(n: Long, i: Int): Long {
 
 fun digitInNumber(i: Int, m: Int): Int {
     var f = m
-    var k = 10L
-    k = powForLong(k, i)
+    val k = powForLong(10L, i)
     while (f >= k) {
         f /= 10
     }
@@ -275,11 +274,13 @@ fun cos(x: Double, eps: Double): Double = TODO()
 fun squareSequenceDigit(n: Int): Int {
     var count = n
     var index = 0
+    var k = 0
     while (count > 0) {
         index++
-        count -= digitNumber(sqr(index))
+        k = digitNumber(sqr(index))
+        count -= k
     }
-    count += digitNumber(sqr(index))
+    count += k
     return digitInNumber(count, sqr(index))
 }
 
@@ -295,10 +296,12 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     var count = n
     var index = 0
+    var k = 0
     while (count > 0) {
         index++
-        count -= digitNumber(fib(index))
+        k = digitNumber(fib(index))
+        count -= k
     }
-    count += digitNumber(fib(index))
+    count += k
     return digitInNumber(count, fib(index))
 }
