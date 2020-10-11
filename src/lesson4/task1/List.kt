@@ -360,7 +360,8 @@ fun russian(n: Int): String {
                 0 -> "тысяч "
                 1 -> "одна тысяча "
                 2 -> "две тысячи "
-                else -> e[digit] + "тысячи "
+                3, 4 -> e[digit] + "тысячи "
+                else -> e[digit] + "тысяч "
             }
         }
 
