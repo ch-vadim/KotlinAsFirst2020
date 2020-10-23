@@ -140,7 +140,7 @@ fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum() /
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val medium = mean(list)
-    for (i in 0 until list.size) {
+    for (i in list.indices) {
         list[i] -= medium
     }
     return list
@@ -187,14 +187,13 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
 fun factorize(n: Int): List<Int> {
     val result = mutableListOf<Int>()
     var k = n
+    var i = 2
     while (k > 1) {
-        for (i in 2..k) {
-            if (k % i == 0) {
-                result.add(i)
-                break
-            }
+        while (k % i == 0) {
+            result.add(i)
+            k /= result.last()
         }
-        k /= result.last()
+        i++
     }
     return result
 }
@@ -238,17 +237,14 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    val letters = buildString {
-        for (letter in 'a'..'z')
-            append(letter)
-    }
+    val letters = ('a'..'z').toList()
     val list = convert(n, base)
-    var result = ""
+    val result = StringBuilder()
     for (element in list) {
-        if (element < 10) result += "$element"
-        else result += letters[element - 10]
+        if (element < 10) result.append(element)
+        else result.append(letters[element - 10])
     }
-    return result
+    return result.toString()
 }
 
 /**
@@ -283,19 +279,19 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    var result = ""
+    val result = StringBuilder()
     var k = n
     val arab = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
     val rim = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
     var i = arab.size - 1
     while (k > 0) {
         while (k >= arab[i]) {
-            result += rim[i]
+            result.append(rim[i])
             k -= arab[i]
         }
         i--
     }
-    return result
+    return result.toString()
 }
 
 /**
@@ -345,37 +341,34 @@ fun russian(n: Int): String {
         "девятнадцать "
     )
     var digit: Int
-    var result = ""
+    val result = StringBuilder()
     if (n >= 1000) {
         digit = n / 100000 % 10
-        result += s[digit]
+        result.append(s[digit])
         digit = n / 10000 % 10
         if (digit == 1) {
             digit = n / 1000 % 10
-            result += spec[digit] + "тысяч "
+            result.append(spec[digit], "тысяч ")
         } else {
-            result += d[digit]
+            result.append(d[digit])
             digit = n / 1000 % 10
-            result += when (digit) {
-                0 -> "тысяч "
-                1 -> "одна тысяча "
-                2 -> "две тысячи "
-                3, 4 -> e[digit] + "тысячи "
-                else -> e[digit] + "тысяч "
-            }
+            if (digit == 0) result.append("тысяч ")
+            else if (digit == 1) result.append("одна тысяча ")
+            else if (digit == 2) result.append("две тысячи ")
+            else if (digit == 3 || digit == 4) result.append(e[digit], "тысячи ")
+            else result.append(e[digit], "тысяч ")
         }
-
     }
     digit = n / 100 % 10
-    result += s[digit]
+    result.append(s[digit])
     digit = n / 10 % 10
     if (digit == 1) {
         digit = n % 10
-        result += spec[digit]
+        result.append(spec[digit])
     } else {
-        result += d[digit]
+        result.append(d[digit])
         digit = n % 10
-        result += e[digit]
+        result.append(e[digit])
     }
-    return result.trim()
+    return result.toString().trim()
 }
