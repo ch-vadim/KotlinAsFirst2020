@@ -184,19 +184,8 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> {
-    val result = mutableListOf<Int>()
-    var k = n
-    var i = 2
-    while (k > 1) {
-        while (k % i == 0) {
-            result.add(i)
-            k /= result.last()
-        }
-        i++
-    }
-    return result
-}
+fun factorize(n: Int): List<Int> = TODO()
+
 
 /**
  * Сложная (4 балла)
@@ -352,11 +341,13 @@ fun russian(n: Int): String {
         } else {
             result.append(d[digit])
             digit = n / 1000 % 10
-            if (digit == 0) result.append("тысяч ")
-            else if (digit == 1) result.append("одна тысяча ")
-            else if (digit == 2) result.append("две тысячи ")
-            else if (digit == 3 || digit == 4) result.append(e[digit], "тысячи ")
-            else result.append(e[digit], "тысяч ")
+            when (digit) {
+                0 -> result.append("тысяч ")
+                1 -> result.append("одна тысяча ")
+                2 -> result.append("две тысячи ")
+                3, 4 -> result.append(e[digit], "тысячи ")
+                else -> result.append(e[digit], "тысяч ")
+            }
         }
     }
     digit = n / 100 % 10
