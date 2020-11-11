@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import lesson1.task1.quadraticRootProduct
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -108,7 +110,16 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    var result = true
+    for ((key) in a) {
+        if (a[key] != b[key]) {
+            result = false
+            break
+        }
+    }
+    return result
+}
 
 /**
  * Простая (2 балла)
@@ -154,7 +165,21 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val result = mapA.toMutableMap()
+    var s: String
+    for ((key, value) in mapB) {
+        if (key !in result) {
+            result[key] = value
+        } else {
+            if (result[key] != value) {
+                s = result[key] + ", " + value
+                result[key] = s
+            }
+        }
+    }
+    return result
+}
 
 /**
  * Средняя (4 балла)
@@ -208,7 +233,25 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    val keys = mutableListOf<String>()
+    for (element in list) {
+        val p = result[element]
+        if (p != null) {
+            result[element] = p + 1
+        } else {
+            result[element] = 1
+        }
+    }
+    for ((key, value) in result) {
+        if (value == 1) keys.add(key)
+    }
+    for (element in keys) {
+        result.remove(element)
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -275,9 +318,36 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *
  * Например:
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
+ *
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val set = list.toSet()
+    var i1 = -1
+    var i2 = -1
+    var index = -1
+    // Рассмотрение случая, когда в заданном списке есть повторяющиеся числа
+    if (number % 2 == 0) {
+        for (element in list) {
+            index++
+            if (element == number / 2) {
+                i1 = i2
+                i2 = index
+            }
+        }
+        if (i1 != -1) {
+            return Pair(i1, i2)
+        }
+    }
+    for (element in set) {
+        if ((number - element in set) && (list.indexOf(element) != list.indexOf(number - element))) {
+            i1 = list.indexOf(element)
+            i2 = list.indexOf(number - element)
+            return Pair(i1, i2)
+        }
+    }
+return Pair(-1, -1)
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -300,4 +370,25 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val uc = mutableMapOf<Double, String>()
+    val result = mutableSetOf<String>()
+    var w = capacity
+    for ((item, pair) in treasures) {
+        val (weight, price) = pair
+        val p = weight.toDouble()/ price.toDouble()
+        uc[p] = item
+    }
+    val sort = uc.toSortedMap()
+    for ((unitCost, item) in sort) {
+        val p = treasures[item]
+        if (p != null) {
+            val (weight, price) = p
+            if (weight <= w) {
+                w -= weight
+                result.add(item)
+            }
+        }
+    }
+    return result
+}
