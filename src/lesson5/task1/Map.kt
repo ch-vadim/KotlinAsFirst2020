@@ -376,11 +376,12 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     var w = capacity
     for ((item, pair) in treasures) {
         val (weight, price) = pair
-        val p = weight.toDouble()/ price.toDouble()
+        val p = weight.toDouble() / price.toDouble()
         uc[p] = item
     }
     val sort = uc.toSortedMap()
     for ((unitCost, item) in sort) {
+
         val p = treasures[item]
         if (p != null) {
             val (weight, price) = p
