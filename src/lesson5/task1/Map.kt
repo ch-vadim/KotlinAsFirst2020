@@ -326,7 +326,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     var i1 = -1
     var i2 = -1
     var index = -1
-    // Рассмотрение случая, когда в заданном списке есть повторяющиеся числа
+    //Рассмотрение случая, когда в заданном списке есть повторяющиеся числа
     if (number % 2 == 0) {
         for (element in list) {
             index++

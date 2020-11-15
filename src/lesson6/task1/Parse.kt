@@ -194,7 +194,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    val case = mapOf<Char, Int>(
+    val case = mapOf(
         'M' to 1000,
         'D' to 500,
         'C' to 100,
