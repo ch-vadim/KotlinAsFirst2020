@@ -3,6 +3,7 @@
 package lesson5.task1
 
 import lesson1.task1.quadraticRootProduct
+import ru.spbstu.kotlin.typeclass.classes.defaultValue
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -346,7 +347,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
             return Pair(i1, i2)
         }
     }
-return Pair(-1, -1)
+    return Pair(-1, -1)
 }
 
 /**
@@ -371,25 +372,21 @@ return Pair(-1, -1)
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val uc = mutableMapOf<Double, String>()
     val result = mutableSetOf<String>()
-    var w = capacity
+    val u = mutableMapOf<String, Double>()
+    var W = capacity
     for ((item, pair) in treasures) {
         val (weight, price) = pair
-        val p = weight.toDouble() / price.toDouble()
-        uc[p] = item
+        u[item] = weight.toDouble() / price
     }
-    val sort = uc.toSortedMap()
-    for ((unitCost, item) in sort) {
-
-        val p = treasures[item]
-        if (p != null) {
-            val (weight, price) = p
-            if (weight <= w) {
-                w -= weight
-                result.add(item)
-            }
+    for ((key, value) in u.entries.sortedBy { it.value }) {
+        val (v, p) = treasures[key]!!
+        if (v <= W) {
+            result.add(key)
+            W -= v
         }
     }
     return result
 }
+
+
