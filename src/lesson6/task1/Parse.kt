@@ -164,7 +164,7 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  */
 fun mostExpensive(description: String): String {
     val product = description.split("; ")
-    var max = 0.0
+    var max = -1.0
     var result = ""
     for (element in product) {
         val s = element.split(" ")
@@ -204,12 +204,12 @@ fun fromRoman(roman: String): Int {
         'I' to 1
     )
     var result = 0
-    val last = case[roman.last()]
-    if (last != null) {
-        result += last
-    } else {
-        return -1
-    }
+    if (roman.isNotEmpty()) {
+        val last = case[roman.last()]
+        if ((last != null)) {
+            result += last
+        } else return -1
+    } else return -1
     if (roman.length > 1) {
         for (i in roman.length - 2 downTo 0) {
             if (case[roman[i]] == null) return -1
