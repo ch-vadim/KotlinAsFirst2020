@@ -4,6 +4,7 @@ package lesson5.task1
 
 import lesson1.task1.quadraticRootProduct
 import ru.spbstu.kotlin.typeclass.classes.defaultValue
+import kotlin.math.max
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -112,14 +113,12 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    var result = true
     for ((key) in a) {
         if (a[key] != b[key]) {
-            result = false
-            break
+            return false
         }
     }
-    return result
+    return true
 }
 
 /**
@@ -168,13 +167,12 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val result = mapA.toMutableMap()
-    var s: String
     for ((key, value) in mapB) {
         if (key !in result) {
             result[key] = value
         } else {
             if (result[key] != value) {
-                s = result[key] + ", " + value
+                val s = result[key] + ", " + value
                 result[key] = s
             }
         }
@@ -239,11 +237,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
     val keys = mutableListOf<String>()
     for (element in list) {
         val p = result[element]
-        if (p != null) {
-            result[element] = p + 1
-        } else {
-            result[element] = 1
-        }
+        result[element] = (p ?: 0) + 1
     }
     for ((key, value) in result) {
         if (value == 1) keys.add(key)
@@ -251,7 +245,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
     for (element in keys) {
         result.remove(element)
     }
-    return result
+    return result.filterValues { it != 1 }
 }
 
 /**
@@ -341,9 +335,9 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
         }
     }
     for (element in set) {
-        if ((number - element in set) && (list.indexOf(element) != list.indexOf(number - element))) {
-            i1 = list.indexOf(element)
-            i2 = list.indexOf(number - element)
+        i1 = list.indexOf(element)
+        i2 = list.indexOf(number - element)
+        if ((number - element in set) && (i1 != i2)) {
             return Pair(i1, i2)
         }
     }
@@ -373,17 +367,30 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     val result = mutableSetOf<String>()
-    val u = mutableMapOf<String, Double>()
-    var W = capacity
+    val items = mutableListOf("")
+    val weight = mutableListOf(0)
+    val price = mutableListOf(0)
+    var v = capacity
     for ((item, pair) in treasures) {
-        val (weight, price) = pair
-        u[item] = weight.toDouble() / price
+        val (w, p) = pair
+        items.add(item)
+        weight.add(w)
+        price.add(p)
     }
-    for ((key, value) in u.entries.sortedBy { it.value }) {
-        val (v, p) = treasures[key]!!
-        if (v <= W) {
-            result.add(key)
-            W -= v
+    val size = treasures.size
+    val table = Array(size + 1) { Array(capacity + 1) { 0 } }
+    for (i1 in 1..size) {
+        for (i2 in 1..capacity) {
+            if (i2 >= weight[i1])
+                table[i1][i2] = max(table[i1 - 1][i2], table[i1 - 1][i2 - weight[i1]] + price[i1])
+            else
+                table[i1][i2] = table[i1 - 1][i2]
+        }
+    }
+    for (i in size downTo 1) {
+        if (table[i][v] != table[i - 1][v]) {
+            result.add(items[i])
+            v -= weight[i]
         }
     }
     return result

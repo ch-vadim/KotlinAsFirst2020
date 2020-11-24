@@ -168,8 +168,8 @@ fun mostExpensive(description: String): String {
     var result = ""
     for (element in product) {
         val s = element.split(" ")
+        if (s.size != 2) return ""
         try {
-            if (s.size != 2) throw return ""
             val price = s[1].toDouble()
             if (price > max) {
                 max = price
@@ -213,10 +213,10 @@ fun fromRoman(roman: String): Int {
     if (roman.length > 1) {
         for (i in roman.length - 2 downTo 0) {
             if (case[roman[i]] == null) return -1
-            if (case[roman[i]]!! >= case[roman[i + 1]]!!) {
-                result += case[roman[i]]!!
+            if (case[roman[i]] ?: 0 >= case[roman[i + 1]] ?: 0) {
+                result += case[roman[i]] ?: 0
             } else {
-                result -= case[roman[i]]!!
+                result -= case[roman[i]] ?: 0
             }
         }
 
