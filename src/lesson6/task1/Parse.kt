@@ -260,4 +260,55 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    var lim = 0
+    var n = 0
+    val list = listOf('+', '-', '<', '>', ']', '[', ' ')
+    var index = cells / 2
+    val result = mutableListOf<Int>()
+
+    for (command in commands) {
+        if (command in list) {
+            when (command) {
+                '[' -> n++
+                ']' -> n--
+            }
+            if (n < 0) throw IllegalArgumentException("Invalid format")
+        } else throw IllegalArgumentException("Invalid format")
+    }
+    if (n != 0) throw IllegalArgumentException("Invalid format")
+    n = 0
+    for (i in 1..cells) result.add(0)
+    while ((lim < limit) and (n <= commands.length - 1)) {
+        when (commands[n]) {
+            '+' -> result[index]++
+            '-' -> result[index]--
+            '>' -> index++
+            '<' -> index--
+        }
+        if (commands[n] == '[') {
+            var k = 1
+            if (result[index] == 0) {
+                while (k != 0) {
+                    n++
+                    if (commands[n] == '[') k++
+                    if (commands[n] == ']') k--
+                }
+            }
+        }
+        if (commands[n] == ']') {
+            var k = 1
+            if (result[index] != 0) {
+                while (k != 0) {
+                    n--
+                    if (commands[n] == '[') k--
+                    if (commands[n] == ']') k++
+                }
+            }
+        }
+        if (index !in 0 until cells) throw IllegalStateException("")
+        n++
+        lim++
+    }
+    return result
+}
