@@ -310,28 +310,17 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    val set = list.toSet()
-    var i1 = -1
-    var i2 = -1
-    var index = -1
-    //Рассмотрение случая, когда в заданном списке есть повторяющиеся числа
-    if (number % 2 == 0) {
-        for (element in list) {
-            index++
-            if (element == number / 2) {
-                i1 = i2
-                i2 = index
-            }
-        }
-        if (i1 != -1) {
-            return Pair(i1, i2)
-        }
+    val map = mutableMapOf<Int, MutableList<Int>>()
+    for ((index, e) in list.withIndex()) {
+        if (map[e] == null) map[e] = mutableListOf(index)
+        else map[e]?.add(index)
     }
-    for (element in set) {
-        i1 = list.indexOf(element)
-        i2 = list.indexOf(number - element)
-        if ((number - element in set) && (i1 != i2)) {
-            return Pair(i1, i2)
+    for ((key, value) in map) {
+        if ((number / 2.0 == key.toDouble()) && (value.size > 1)) {
+            return Pair(value[0], value[1])
+        }
+        if ((map[number - key] != null) && (number / 2 != key)) {
+            return Pair(value.first(), map[number - key]!!.first())
         }
     }
     return Pair(-1, -1)

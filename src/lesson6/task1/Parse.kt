@@ -166,17 +166,18 @@ fun mostExpensive(description: String): String {
     val product = description.split("; ")
     var max = -1.0
     var result = ""
+    var price: Double
     for (element in product) {
         val s = element.split(" ")
         if (s.size != 2) return ""
         try {
-            val price = s[1].toDouble()
-            if (price > max) {
-                max = price
-                result = s[0]
-            }
+            price = s[1].toDouble()
         } catch (e: NumberFormatException) {
             return ""
+        }
+        if (price > max) {
+            max = price
+            result = s[0]
         }
     }
     return result
