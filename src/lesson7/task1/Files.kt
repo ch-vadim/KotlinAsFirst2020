@@ -365,7 +365,50 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    var i = false
+    var b = false
+    var s = false
+    writer.write("<html><body><p>")
+    File(inputName).forEachLine { line ->
+        if (line.isEmpty()) {
+            writer.write("</p><p>")
+            writer.newLine()
+            return@forEachLine
+        }
+        var l = line
+        while (l.contains(Regex("\\*\\*"))) {
+            if (b) {
+                b = false
+                l = Regex("\\*\\*").replaceFirst(l, "</b>")
+            } else {
+                b = true
+                l = Regex("\\*\\*").replaceFirst(l, "<b>")
+            }
+        }
+        while (l.contains(Regex("\\*"))) {
+            if (i) {
+                i = false
+                l = Regex("\\*").replaceFirst(l, "</i>")
+            } else {
+                i = true
+                l = Regex("\\*").replaceFirst(l, "<i>")
+            }
+        }
+        while (l.contains(Regex("""~~"""))) {
+            if (s) {
+                s = false
+                l = Regex("""~~""").replaceFirst(l, "</s>")
+            } else {
+                s = true
+                l = Regex("""~~""").replaceFirst(l, "<s>")
+            }
+        }
+        writer.write(l)
+        writer.newLine()
+    }
+    writer.write("</p></body></html>")
+    writer.close()
 }
 
 /**
