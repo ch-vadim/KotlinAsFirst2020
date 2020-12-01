@@ -195,6 +195,10 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         if (l.length > max) max = l.length
     }
     File(inputName).forEachLine { line ->
+        if (line.isEmpty()){
+            writer.newLine()
+            return@forEachLine
+        }
         val l = line.split(" ").filter { it != "" }.joinToString(separator = " ")
         when {
             count[line] == 1 -> {
