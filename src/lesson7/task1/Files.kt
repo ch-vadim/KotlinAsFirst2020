@@ -191,7 +191,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
                 l = l.trim()
             }
         }
-        count[line] = l.split(" ").size
+        count[line] = l.split(" ").filter { it != "" }.size
         if (l.length > max) max = l.length
     }
     File(inputName).forEachLine { line ->
