@@ -206,6 +206,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
             l.length < max -> {
                 val space = (max - l.length + count[line]!! - 1) / (count[line]!! - 1)
                 var specialSpace = (max - l.length) % (count[line]!! - 1)
+                if ((max - l.length) < count[line]!! - 1) specialSpace = max - l.length
                 for (word in l.split(" ")) {
                     writer.write(word)
                     count[line] = count[line]!! - 1
