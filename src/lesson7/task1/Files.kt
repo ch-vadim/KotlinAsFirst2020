@@ -370,13 +370,14 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var b = false
     var s = false
     writer.write("<html><body><p>")
-    File(inputName).forEachLine { line ->
-        if (line.isEmpty()) {
+    val lines = File(inputName).readLines()
+    for (m in lines.indices) {
+        if (lines[m].isEmpty() && (m == 0 || lines[m - 1].isNotEmpty())) {
             writer.write("</p><p>")
             writer.newLine()
-            return@forEachLine
+            continue
         }
-        var l = line
+        var l = lines[m]
         while (l.contains(Regex("\\*\\*"))) {
             if (b) {
                 b = false
