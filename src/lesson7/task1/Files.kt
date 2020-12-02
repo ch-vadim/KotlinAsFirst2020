@@ -195,7 +195,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         if (l.length > max) max = l.length
     }
     File(inputName).forEachLine { line ->
-        if (line.isEmpty()){
+        if (line.isEmpty()) {
             writer.newLine()
             return@forEachLine
         }
@@ -372,7 +372,10 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     writer.write("<html><body><p>")
     val lines = File(inputName).readLines()
     for (m in lines.indices) {
-        if (lines[m].isEmpty() && m != lines.size - 1) {
+        if (lines[m].isEmpty() &&
+            m != lines.size - 1 && lines[m - 1].isNotEmpty() &&
+            m != 0 && lines[m + 1].isNotEmpty()
+        ) {
             writer.write("</p><p>")
             writer.newLine()
             continue
