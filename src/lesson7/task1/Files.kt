@@ -2,8 +2,11 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitNumber
 import java.io.File
+import java.util.regex.Pattern
 import kotlin.text.toRegex as toRegex
+import kotlin.math.pow
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -364,6 +367,7 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     var i = false
@@ -581,6 +585,86 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    //проверить возможность минуса под первой цифрой лхв
+    val writer = File(outputName).bufferedWriter()
+    var spaces = 2
+    var result: String
+    var n = digitNumber(lhv)
+    var number = lhv.toString()
+    var numb = number[0].toInt() // число от которого отнимаем
+    number = number.drop(0)
+    writer.write("  $lhv | $rhv")
+    writer.newLine()
+    if (lhv < rhv) {
+        writer.write(" ".repeat(n) + "-0   0")
+        writer.newLine()
+        writer.write("  " + "-".repeat(n))
+        writer.newLine()
+        writer.write("  $lhv")
+        writer.close()
+    }
+    while (n > 0 && numb < rhv) {
+        numb = (numb.toString() + number[0]).toInt()
+        n--
+        if (n != 1) number = number.drop(0)
+    }
+    var k = numb - numb % rhv
+    spaces = digitNumber((lhv) - numb.toString().length)
+    writer.write(" -$k   " + " ".repeat(spaces) + (lhv / rhv).toString())
+    writer.newLine()
+    writer.write(" " + "-".repeat(numb.toString().length)) // проверить
+    if (numb == k) {
+        result = " ".repeat(k.toString().length + 1) + "0" + number[0]
+        writer.write(result)
+        writer.newLine()
+        numb = number[0].toInt()
+        number = number.drop(0)
+        n--
+    } else {
+        spaces = k.toString().length - (numb - k).toString().length + 2
+        numb = (numb - k) * 10 + number[0].toInt()
+        result = " ".repeat(spaces) + numb.toString()
+        writer.write(result)
+        writer.newLine()
+        number = number.drop(0)
+        n--
+    }
+    while (n > 0) {
+        k = numb - numb % rhv
+        spaces = result.length - k.toString().length - 1
+        result = " ".repeat(spaces) + "-" + k.toString()
+        writer.write(result)
+        writer.newLine()
+        result = " ".repeat(spaces) + "-".repeat(result.length - spaces)
+        writer.write(result)
+        writer.newLine()
+        if (numb == k) {
+            result = " ".repeat(result.length - 1) + "0" + number[0]
+            writer.write(result)
+            writer.newLine()
+            numb = number[0].toInt()
+            number = number.drop(0)
+            n--
+        } else {
+            numb = (numb - k) * 10 + number[0].toInt()
+            result = " ".repeat(result.length - numb.toString().length + 1) + numb.toString()
+            writer.write(result)
+            writer.newLine()
+            number = number.drop(0)
+            n--
+        }
+    }
+    k = numb - numb % rhv
+    spaces = result.length - digitNumber(k) - 1
+    result = " ".repeat(spaces) + "-" + k.toString()
+    writer.write(result)
+    writer.newLine()
+    result = " ".repeat(spaces) + "-".repeat(result.length - spaces)
+    writer.write(result)
+    writer.newLine()
+    numb -= k
+    result = " ".repeat(result.length - digitNumber(numb)) + numb.toString()
+    writer.write(result)
+    writer.close()
 }
 
