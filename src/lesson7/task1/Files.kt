@@ -565,7 +565,7 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     val writer = File(outputName).bufferedWriter()
-    var space = 2
+    var space: Int
     var result: String
     var n = digitNumber(lhv)
     var div = "0"
@@ -576,7 +576,6 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         div = (lhv / 10.0.pow(n)).toInt().toString()
     }
     var v = div.toInt() / rhv * rhv
-
     space = if (digitNumber(div.toInt()) == digitNumber(v)) 0 else 1
     result = " ".repeat(space) + "-$v" + " ".repeat(n + 3) + (lhv / rhv).toString()
     writer.write(result)
@@ -598,10 +597,10 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     while (n >= 0) {
         v = div.toInt() / rhv * rhv
         space = result.length - digitNumber(v) - 1
-        result = " ".repeat(space) + "-$v" // minus chtoto
+        result = " ".repeat(space) + "-$v"
         writer.write(result)
         writer.newLine()
-        result = " ".repeat(space) + "-".repeat(digitNumber(v) + 1) // ----
+        result = " ".repeat(space) + "-".repeat(digitNumber(v) + 1)
         writer.write(result)
         writer.newLine()
         if (n != 0) {
