@@ -596,22 +596,24 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     writer.newLine()
     while (n >= 0) {
         v = div.toInt() / rhv * rhv
-        space = result.length - digitNumber(v) - 1 // -1
+        space = result.length - digitNumber(v) - 1
         if (space < 0) space = 0
         result = " ".repeat(space) + "-$v"
         writer.write(result)
         writer.newLine()
-        result = " ".repeat(space) + "-".repeat(digitNumber(v) + 1)
-        writer.write(result)
-        writer.newLine()
         if (n != 0) {
             div = (div.toInt() - v).toString() + (lhv % 10.0.pow(n) / 10.0.pow(n - 1)).toInt().toString()
-            space += digitNumber(v) - div.length + 2
+            space = result.length - div.length + 1
         } else {
             div = (div.toInt() - v).toString()
-            space += digitNumber(v)
+            space = result.length - div.length
         }
         n--
+        var line = maxOf(div.length - 1, digitNumber(v) + 1)
+        if (n == -1 && div.length -1 >= digitNumber(v) + 1) line++
+        result = " ".repeat(result.length - line) + "-".repeat(line)
+        writer.write(result)
+        writer.newLine()
         result = " ".repeat(space) + div
         writer.write(result)
         writer.newLine()
