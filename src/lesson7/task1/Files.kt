@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitInNumber
 import lesson3.task1.digitNumber
 import java.io.File
 import java.util.regex.Pattern
@@ -69,7 +70,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
-        if ((line.isEmpty()) || (line.first() != '_')) {
+        if (!line.startsWith("_")) {
             writer.write(line)
             writer.newLine()
         }
@@ -128,29 +129,16 @@ fun sibilants(inputName: String, outputName: String) {
 fun centerFile(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     var max = 0
+    val lines = mutableListOf<String>()
     File(inputName).forEachLine { line ->
         var l = line
-        if (l.isNotEmpty()) {
-            while (l.first() == ' ' || l.last() == ' ') {
-                l = l.trim()
-            }
-        }
+        l = l.trim()
         if (l.length > max) max = l.length
+        lines.add(l)
     }
-    File(inputName).forEachLine { line ->
-        var l = line
-        if (l.isNotEmpty()) {
-            while (l.first() == ' ' || l.last() == ' ') {
-                l = l.trim()
-            }
-        } else {
-            for (i in 1..max / 2) writer.write(" ")
-            writer.newLine()
-            return@forEachLine
-        }
-        val space = (max - l.length) / 2
-        for (i in 1..space) writer.write(" ")
-        writer.write(l)
+    for (line in lines) {
+        val space = (max - line.length) / 2
+        writer.write(" ".repeat(space) + line)
         writer.newLine()
     }
     writer.close()
@@ -187,45 +175,33 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     var max = 0
     val count = mutableMapOf<String, Int>()
+    val lines = mutableListOf<String>()
     File(inputName).forEachLine { line ->
-        var l = line
-        if (l.isNotEmpty()) {
-            while (l.first() == ' ' || l.last() == ' ') {
-                l = l.trim()
-            }
-        }
-        count[line] = l.split(" ").filter { it != "" }.size
+        val l = line.split(" ").filter { it != "" }.joinToString(separator = " ")
+        count[l] = l.split(" ").size
         if (l.length > max) max = l.length
+        lines.add(l)
     }
-    File(inputName).forEachLine { line ->
+    for (line in lines) {
         if (line.isEmpty()) {
             writer.newLine()
-            return@forEachLine
+            continue
         }
-        val l = line.split(" ").filter { it != "" }.joinToString(separator = " ")
-        when {
-            count[line] == 1 -> {
-                writer.write(l)
-            }
-            l.length == max -> {
-                writer.write(l)
-            }
-            l.length < max -> {
-                val space = (max - l.length + count[line]!! - 1) / (count[line]!! - 1)
-                var specialSpace = (max - l.length) % (count[line]!! - 1)
-                if ((max - l.length) < count[line]!! - 1) specialSpace = max - l.length
-                for (word in l.split(" ")) {
-                    writer.write(word)
-                    count[line] = count[line]!! - 1
-                    if (count[line] != 0) {
-                        for (i in 1..space) writer.write(" ")
-                    }
-                    if (specialSpace > 0) {
-                        writer.write(" ")
-                        specialSpace--
-                    }
+        if (count[line] == 1) writer.write(line)
+        else {
+            val space = (max - line.length + count[line]!! - 1) / (count[line]!! - 1)
+            var specialSpace = (max - line.length) % (count[line]!! - 1)
+            if ((max - line.length) < count[line]!! - 1) specialSpace = max - line.length
+            for (word in line.split(" ")) {
+                writer.write(word)
+                count[line] = count[line]!! - 1
+                if (count[line] != 0) {
+                    writer.write(" ".repeat(space))
                 }
-
+                if (specialSpace > 0) {
+                    writer.write(" ")
+                    specialSpace--
+                }
             }
         }
         writer.newLine()
@@ -387,31 +363,34 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
         p = false
         var l = lines[m]
-        while (l.contains(Regex("\\*\\*"))) {
+        var r = Regex("\\*\\*")
+        while (l.contains(r)) {
             if (b) {
                 b = false
-                l = Regex("\\*\\*").replaceFirst(l, "</b>")
+                l = r.replaceFirst(l, "</b>")
             } else {
                 b = true
-                l = Regex("\\*\\*").replaceFirst(l, "<b>")
+                l = r.replaceFirst(l, "<b>")
             }
         }
-        while (l.contains(Regex("\\*"))) {
+        r = Regex("\\*")
+        while (l.contains(r)) {
             if (i) {
                 i = false
-                l = Regex("\\*").replaceFirst(l, "</i>")
+                l = r.replaceFirst(l, "</i>")
             } else {
                 i = true
-                l = Regex("\\*").replaceFirst(l, "<i>")
+                l = r.replaceFirst(l, "<i>")
             }
         }
-        while (l.contains(Regex("""~~"""))) {
+        r = Regex("""~~""")
+        while (l.contains(r)) {
             if (s) {
                 s = false
-                l = Regex("""~~""").replaceFirst(l, "</s>")
+                l = r.replaceFirst(l, "</s>")
             } else {
                 s = true
-                l = Regex("""~~""").replaceFirst(l, "<s>")
+                l = r.replaceFirst(l, "<s>")
             }
         }
         writer.write(l)
@@ -585,86 +564,57 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    //проверить возможность минуса под первой цифрой лхв
     val writer = File(outputName).bufferedWriter()
-    var spaces = 2
+    var space = 2
     var result: String
     var n = digitNumber(lhv)
-    var number = lhv.toString()
-    var numb = number[0].toInt() // число от которого отнимаем
-    number = number.drop(0)
-    writer.write("  $lhv | $rhv")
+    var div = "0"
+    writer.write(" $lhv | $rhv")
     writer.newLine()
-    if (lhv < rhv) {
-        writer.write(" ".repeat(n) + "-0   0")
-        writer.newLine()
-        writer.write("  " + "-".repeat(n))
-        writer.newLine()
-        writer.write("  $lhv")
-        writer.close()
-    }
-    while (n > 0 && numb < rhv) {
-        numb = (numb.toString() + number[0]).toInt()
+    while (div.toInt() < rhv && n > 0) {
         n--
-        if (n != 1) number = number.drop(0)
+        div = (lhv / 10.0.pow(n)).toInt().toString()
     }
-    var k = numb - numb % rhv
-    spaces = digitNumber((lhv) - numb.toString().length)
-    writer.write(" -$k   " + " ".repeat(spaces) + (lhv / rhv).toString())
+    var v = div.toInt() / rhv * rhv
+
+    space = if (digitNumber(div.toInt()) == digitNumber(v)) 0 else 1
+    result = " ".repeat(space) + "-$v" + " ".repeat(n + 3) + (lhv / rhv).toString()
+    writer.write(result)
     writer.newLine()
-    writer.write(" " + "-".repeat(numb.toString().length)) // проверить
-    if (numb == k) {
-        result = " ".repeat(k.toString().length + 1) + "0" + number[0]
-        writer.write(result)
-        writer.newLine()
-        numb = number[0].toInt()
-        number = number.drop(0)
-        n--
+    result = " ".repeat(space) + "-".repeat(digitNumber(v) + 1)
+    writer.write(result)
+    writer.newLine()
+    if (n != 0) {
+        div = (div.toInt() - v).toString() + (lhv % 10.0.pow(n) / 10.0.pow(n - 1)).toInt().toString()
+        space += digitNumber(v) - div.length + 2
     } else {
-        spaces = k.toString().length - (numb - k).toString().length + 2
-        numb = (numb - k) * 10 + number[0].toInt()
-        result = " ".repeat(spaces) + numb.toString()
-        writer.write(result)
-        writer.newLine()
-        number = number.drop(0)
-        n--
+        div = (div.toInt() - v).toString()
+        space += digitNumber(v)
     }
-    while (n > 0) {
-        k = numb - numb % rhv
-        spaces = result.length - k.toString().length - 1
-        result = " ".repeat(spaces) + "-" + k.toString()
+    n--
+    result = " ".repeat(space) + div
+    writer.write(result)
+    writer.newLine()
+    while (n >= 0) {
+        v = div.toInt() / rhv * rhv
+        space = result.length - digitNumber(v) - 1
+        result = " ".repeat(space) + "-$v" // minus chtoto
         writer.write(result)
         writer.newLine()
-        result = " ".repeat(spaces) + "-".repeat(result.length - spaces)
+        result = " ".repeat(space) + "-".repeat(digitNumber(v) + 1) // ----
         writer.write(result)
         writer.newLine()
-        if (numb == k) {
-            result = " ".repeat(result.length - 1) + "0" + number[0]
-            writer.write(result)
-            writer.newLine()
-            numb = number[0].toInt()
-            number = number.drop(0)
-            n--
+        if (n != 0) {
+            div = (div.toInt() - v).toString() + (lhv % 10.0.pow(n) / 10.0.pow(n - 1)).toInt().toString()
+            space += digitNumber(v) - div.length + 2
         } else {
-            numb = (numb - k) * 10 + number[0].toInt()
-            result = " ".repeat(result.length - numb.toString().length + 1) + numb.toString()
-            writer.write(result)
-            writer.newLine()
-            number = number.drop(0)
-            n--
+            div = (div.toInt() - v).toString()
+            space += digitNumber(v)
         }
+        n--
+        result = " ".repeat(space) + div
+        writer.write(result)
+        writer.newLine()
     }
-    k = numb - numb % rhv
-    spaces = result.length - digitNumber(k) - 1
-    result = " ".repeat(spaces) + "-" + k.toString()
-    writer.write(result)
-    writer.newLine()
-    result = " ".repeat(spaces) + "-".repeat(result.length - spaces)
-    writer.write(result)
-    writer.newLine()
-    numb -= k
-    result = " ".repeat(result.length - digitNumber(numb)) + numb.toString()
-    writer.write(result)
     writer.close()
 }
-
