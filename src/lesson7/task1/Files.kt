@@ -573,34 +573,17 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         n--
         div = (lhv / 10.0.pow(n)).toInt().toString()
     }
-    var v = div.toInt() / rhv * rhv
-    space = if (digitNumber(div.toInt()) == digitNumber(v)) 1 else 0
+    var d = true
+    space = if (digitNumber(div.toInt()) == digitNumber(div.toInt() / rhv * rhv)) 1 else 0
     writer.write(" ".repeat((space)) + "$lhv | $rhv")
     writer.newLine()
-    result = "-$v" + " ".repeat(n + 3) + (lhv / rhv).toString()
-    writer.write(result)
-    writer.newLine()
-    result = "-".repeat(digitNumber(v) + 1)
-    writer.write(result)
-    writer.newLine()
-    if (n != 0) {
-        div = (div.toInt() - v).toString() + (lhv % 10.0.pow(n) / 10.0.pow(n - 1)).toInt().toString()
-        space = result.length - div.length + 1
-    } else {
-        div = (div.toInt() - v).toString()
-        space = result.length - div.length
-    }
-    n--
-    result = " ".repeat(space) + div
-    writer.write(result)
-    writer.newLine()
     while (n >= 0) {
-        v = div.toInt() / rhv * rhv
-        space = result.length - digitNumber(v) - 1
-        if (space < 0) space = 0
-        result = " ".repeat(space) + "-$v"
-        writer.write(result)
+        val v = div.toInt() / rhv * rhv
+        result = " ".repeat(space - 1 + div.length - digitNumber(v)) + "-$v"
+        if (d) writer.write(result + " ".repeat(n + 3) + (lhv / rhv).toString())
+        else writer.write(result)
         writer.newLine()
+        d = false
         if (n != 0) {
             div = (div.toInt() - v).toString() + (lhv % 10.0.pow(n) / 10.0.pow(n - 1)).toInt().toString()
             space = result.length - div.length + 1
@@ -610,7 +593,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         }
         n--
         var line = maxOf(div.length - 1, digitNumber(v) + 1)
-        if (n == -1 && div.length -1 >= digitNumber(v) + 1) line++
+        if (n == -1 && div.length - 1 >= digitNumber(v) + 1) line++
         result = " ".repeat(result.length - line) + "-".repeat(line)
         writer.write(result)
         writer.newLine()
