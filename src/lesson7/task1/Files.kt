@@ -131,8 +131,7 @@ fun centerFile(inputName: String, outputName: String) {
     var max = 0
     val lines = mutableListOf<String>()
     File(inputName).forEachLine { line ->
-        var l = line
-        l = l.trim()
+        val l = line.trim()
         if (l.length > max) max = l.length
         lines.add(l)
     }
@@ -343,13 +342,15 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
-
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     var i = false
     var b = false
     var s = false
     var p = true
+    val rb = Regex("\\*\\*")
+    val ri = Regex("\\*")
+    val rs = Regex("""~~""")
     writer.write("<html><body><p>")
     val lines = File(inputName).readLines()
     for (m in lines.indices) {
@@ -363,34 +364,31 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
         p = false
         var l = lines[m]
-        var r = Regex("\\*\\*")
-        while (l.contains(r)) {
+        while (l.contains(rb)) {
             if (b) {
                 b = false
-                l = r.replaceFirst(l, "</b>")
+                l = rb.replaceFirst(l, "</b>")
             } else {
                 b = true
-                l = r.replaceFirst(l, "<b>")
+                l = rb.replaceFirst(l, "<b>")
             }
         }
-        r = Regex("\\*")
-        while (l.contains(r)) {
+        while (l.contains(ri)) {
             if (i) {
                 i = false
-                l = r.replaceFirst(l, "</i>")
+                l = ri.replaceFirst(l, "</i>")
             } else {
                 i = true
-                l = r.replaceFirst(l, "<i>")
+                l = ri.replaceFirst(l, "<i>")
             }
         }
-        r = Regex("""~~""")
-        while (l.contains(r)) {
+        while (l.contains(rs)) {
             if (s) {
                 s = false
-                l = r.replaceFirst(l, "</s>")
+                l = rs.replaceFirst(l, "</s>")
             } else {
                 s = true
-                l = r.replaceFirst(l, "<s>")
+                l = rs.replaceFirst(l, "<s>")
             }
         }
         writer.write(l)
