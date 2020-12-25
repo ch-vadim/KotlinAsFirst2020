@@ -97,7 +97,6 @@ fun rookMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun rookTrajectory(start: Square, end: Square): List<Square> {
-    var result = mutableListOf<Square>()
     return when (rookMoveNumber(start, end)) {
         0 -> listOf(start)
         1 -> listOf(start, end)
