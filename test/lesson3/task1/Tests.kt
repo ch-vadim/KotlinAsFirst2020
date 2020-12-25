@@ -71,6 +71,7 @@ class Tests {
         assertEquals(2, digitNumber(99))
         assertEquals(3, digitNumber(123))
         assertEquals(10, digitNumber(Int.MAX_VALUE))
+        assertEquals(2, digitNumber(-14))
     }
 
     @Test
@@ -247,5 +248,7 @@ class Tests {
         assertEquals(2, fibSequenceDigit(9))
         assertEquals(5, fibSequenceDigit(14))
         assertEquals(2, fibSequenceDigit(20))
+        assertEquals(3, fibSequenceDigit(234))
+        assertEquals(1, fibSequenceDigit(170))
     }
 }

@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import kotlin.math.abs
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -310,6 +312,85 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         if (index !in 0 until cells) throw IllegalStateException("")
         n++
         lim++
+    }
+    return result
+}
+
+/**
+
+ * На доске 8х8 клеток стоят чёрные шашки.
+ * Их координаты заданы строкой blackCoords вида “13 62 84 75”,
+
+ * где каждое двузначное число соответствует одной шашке,
+ * первая цифра соответствует X-координате (столбцу),
+ * вторая Y-координате (строке).
+ * Отдельно заданы координаты одной белой шашки:
+ * whiteX, whiteY, например 7 и 3.
+ * Все координаты должны быть в диапазоне от 1 до 8.
+
+ *
+
+ * --------
+
+ * --------
+
+ * --------
+
+ * ------ч-
+
+ * -------ч
+
+ * ч-----б-
+
+ * -----ч--
+
+ * --------
+
+ *
+ * Найти количество чёрных шашек, находящихся рядом (по горизонтали,
+ * вертикали или диагонали) с белой. В примере ответ = 2 (62, 84).
+
+ *
+
+ * Если входные аргументы являются некорректными,
+
+ * бросить IllegalArgumentException
+
+ *
+
+ * Кроме функции, следует написать тесты,
+
+ * подтверждающие её работоспособность.
+
+ */
+
+fun myFun(blackCoords: String, whiteX: Int, whiteY: Int): Int {
+    val string = "Danil#Pasenko#9#A#4 2 3 4 5"
+    val array = string.split("#")
+    println(array)
+
+
+
+
+    val list = blackCoords.split(" ")
+    var result = 0
+    if (whiteX !in 1..8 || whiteY !in 1..8) throw IllegalArgumentException("Invalid format")
+    for (element in list) {
+        var i = 0
+        for (e in list) {
+            if (element == e) i++
+        }
+        if (i > 1) throw IllegalArgumentException("Invalid format")
+        val xy = try {
+            element.toInt()
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid format")
+        }
+        val x = xy / 10
+        val y = xy % 10
+        if (x !in 1..8 || y !in 1..8 || (x == whiteX && y == whiteY))
+            throw IllegalArgumentException("Invalid format")
+        if ((abs(x - whiteX) <= 1) && (abs(y - whiteY) <= 1)) result++
     }
     return result
 }
