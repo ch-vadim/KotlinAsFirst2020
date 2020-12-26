@@ -2,6 +2,7 @@
 
 package lesson8.task2
 
+import lesson4.task1.abs
 import java.lang.IllegalArgumentException
 
 /**
@@ -127,7 +128,13 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException("Invalid format")
+    if (start == end) return 0
+    if (end.row - start.row == end.column - start.column) return 1
+    if (((end.row - start.row) % 2 - (end.column - start.column) % 2) == 0) return 2
+    return -1
+}
 
 /**
  * Сложная (5 баллов)
@@ -147,7 +154,21 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> {
+    return when (bishopMoveNumber(start, end)) {
+        -1 -> emptyList()
+        0 -> listOf(start)
+        1 -> listOf(start, end)
+        else -> { //работает как говно, переделать с проверкой направления хода(их 4 диагонали)
+            val m = maxOf(kotlin.math.abs(start.row - end.row), kotlin.math.abs(start.column - end.column)) / 2
+            var s = Square(start.column - m, start.row + m)
+            if (!s.inside()) {
+                s = Square(start.column + m, start.row + m)
+            }
+            listOf(start, s, end)
+        }
+    }
+}
 
 /**
  * Средняя (3 балла)
@@ -169,7 +190,10 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int {
+    if (!(start.inside() && end.inside())) throw IllegalArgumentException("Invalid format")
+    return maxOf(kotlin.math.abs(start.row - end.row), kotlin.math.abs(start.column - end.column))
+}
 
 /**
  * Сложная (5 баллов)
@@ -185,7 +209,34 @@ fun kingMoveNumber(start: Square, end: Square): Int = TODO()
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    var s = start
+    val result = mutableListOf(start)
+    if (start == end) return listOf(start)
+    val c = try {
+        (end.column - start.column) / kotlin.math.abs(end.column - start.column)
+    } catch (e: Exception) {
+        return listOf(start, end)
+    }
+    val r = try {
+        (end.row - start.row) / kotlin.math.abs(end.row - start.row)
+    } catch (e: Exception) {
+        return listOf(start, end)
+    }
+    while (s.column != end.column && s.row != end.row) {
+        s = Square(s.column + c, s.row + r)
+        result.add(s)
+    }
+    while (s.column != end.column) {
+        s = Square(s.column + c, s.row)
+        result.add(s)
+    }
+    while (s.row != end.row) {
+        s = Square(s.column, s.row + r)
+        result.add(s)
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
