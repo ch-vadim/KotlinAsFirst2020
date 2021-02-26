@@ -162,11 +162,14 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Сравнение на равенство (по контракту Any.equals)
      */
     override fun equals(other: Any?): Boolean {
-        if (other !is UnsignedBigInteger || list.size != other.list.size) return false
-        for (i in 0 until list.size)
-            if (list[i] != other.list[i])
-                return false
-        return true
+        if (other is UnsignedBigInteger && list.size == other.list.size) {
+            for (i in 0 until list.size) {
+                if (list[i] != other.list[i])
+                    return false
+            }
+            return true
+        }
+        return false
     }
 
     /**
@@ -197,9 +200,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Если число не влезает в диапазон Int, бросить ArithmeticException
      */
     fun toInt(): Int {
-        if (list.size > digitNumber(Int.MAX_VALUE) ||
-            list.size == digitNumber(Int.MAX_VALUE) && this > UnsignedBigInteger(Int.MAX_VALUE)
-        ) throw ArithmeticException("number > MaxValue")
+        if (this > UnsignedBigInteger(Int.MAX_VALUE)) throw ArithmeticException("number > MaxValue")
         var result = 0
         for (i in list) {
             result = result * 10 + i

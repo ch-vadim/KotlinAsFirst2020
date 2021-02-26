@@ -18,7 +18,6 @@ internal class UnsignedBigIntegerTest {
         assertEquals(UnsignedBigInteger("2"), UnsignedBigInteger("1") + UnsignedBigInteger("01"))
         assertEquals(UnsignedBigInteger("1245540515840"),UnsignedBigInteger("386547056640") + UnsignedBigInteger("858993459200"))
         assertEquals(UnsignedBigInteger("31310311587840"),UnsignedBigInteger("1245540515840") + UnsignedBigInteger("30064771072000"))
-        assertEquals(UnsignedBigInteger("18446744047939747840"),UnsignedBigInteger("1266874863939747840") + UnsignedBigInteger("17179869184000000000"))
 
     }
 
@@ -31,6 +30,7 @@ internal class UnsignedBigIntegerTest {
             UnsignedBigInteger(2) - UnsignedBigInteger(4)
         }
         assertEquals(UnsignedBigInteger("9087654329"), UnsignedBigInteger("9087654329") - UnsignedBigInteger(0))
+        assertEquals(UnsignedBigInteger(0), UnsignedBigInteger(0) - UnsignedBigInteger(0))
     }
 
     @Test
@@ -48,6 +48,10 @@ internal class UnsignedBigIntegerTest {
             UnsignedBigInteger(0),
             UnsignedBigInteger("1234") * UnsignedBigInteger("0")
         )
+        assertEquals(
+            UnsignedBigInteger(0),
+            UnsignedBigInteger("0") * UnsignedBigInteger("5")
+        )
     }
 
     @Test
@@ -64,6 +68,7 @@ internal class UnsignedBigIntegerTest {
             UnsignedBigInteger("4294967296"),
             UnsignedBigInteger("18446744073709551619") / UnsignedBigInteger("4294967296")
         )
+        assertEquals(UnsignedBigInteger(0), UnsignedBigInteger(0) / UnsignedBigInteger(555))
     }
 
     @Test
@@ -78,6 +83,9 @@ internal class UnsignedBigIntegerTest {
             UnsignedBigInteger(3),
             UnsignedBigInteger("18446744073709551619") % UnsignedBigInteger("4294967296")
         )
+        assertThrows(ArithmeticException::class.java) {
+            UnsignedBigInteger(1) % UnsignedBigInteger(0)
+        }
     }
 
     @Test
@@ -102,5 +110,7 @@ internal class UnsignedBigIntegerTest {
     fun toInt() {
         assertEquals(123456789, UnsignedBigInteger("123456789").toInt())
         assertEquals(0, UnsignedBigInteger("0").toInt())
+        assertThrows(ArithmeticException::class.java) { UnsignedBigInteger("21474836471").toInt() }
+        assertEquals(Int.MAX_VALUE, UnsignedBigInteger(Int.MAX_VALUE).toInt())
     }
 }
