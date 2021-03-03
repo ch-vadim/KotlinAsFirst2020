@@ -14,24 +14,22 @@ import java.lang.StringBuilder
  * сравнение на равенство и неравенство
  */
 class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
-    val list = mutableListOf<Int>()
+    private val listOfDigits = mutableListOf<Int>()
 
     /**
      * Конструктор из строки
      */
     constructor(s: String) {
-        if (!s.contains(Regex("""\d+"""))) throw IllegalStateException("Invalid format") //сложно разораться с регексом
+        if (!s.contains(Regex("""\d+"""))) throw IllegalStateException("Invalid format")
         if (s.matches(Regex("""0*"""))) {
-            list.add(0)
+            listOfDigits.add(0)
             return
         }
-        var f = true
+        val result = mutableListOf<Int>()
         for (element in s) {
-            if (!(f && (element == '0'))) {
-                list.add(element.toString().toInt())
-                f = false
-            }
+            result.add(element.toString().toInt())
         }
+        listOfDigits.addAll(result.dropWhile { it == 0 })
     }
 
     /**
@@ -40,33 +38,48 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     constructor(i: Int) {
         if (i < 0) throw IllegalStateException("Invalid format")
         if (i == 0) {
-            list.add(0)
+            listOfDigits.add(0)
             return
         }
         var num = i
         while (num != 0) {
-            list.add(0, (num % 10))
+            listOfDigits.add(0, (num % 10))
             num /= 10
         }
+    }
+
+    constructor(l: MutableList<Int>) {
+        val result = l.dropWhile { it == 0 }
+        if (result.isEmpty()) listOfDigits.add(0) else listOfDigits.addAll(result)
+        return
+    }
+
+    private constructor(digit: Int, zeros: Int) {
+        listOfDigits.add(digit)
+        repeat(zeros) {
+            listOfDigits.add(0)
+        }
+    }
+
+    companion object {
+        val maxValueInt = UnsignedBigInteger(Int.MAX_VALUE)
     }
 
     /**
      * Сложение
      */
     operator fun plus(other: UnsignedBigInteger): UnsignedBigInteger {
-        val result = StringBuilder()
+        val result = mutableListOf<Int>()
         var rem = 0
-        val ls = list.size
-        val ols = other.list.size
+        val ls = listOfDigits.size
+        val ols = other.listOfDigits.size
         val m = maxOf(ls, ols) + 1
         for (i in 1..m) {
-            val e1 = if (ls - i < 0) 0 else list[ls - i]
-            val e2 = if (ols - i < 0) 0 else other.list[ols - i]
-            val r = e1 + e2 + rem
-            result.append((r % 10).toString())
+            val r = listOfDigits.getOrElse(ls - i) { 0 } + other.listOfDigits.getOrElse(ols - i) { 0 } + rem
+            result.add(0, r % 10)
             rem = r / 10
         }
-        return UnsignedBigInteger(result.toString().reversed())
+        return UnsignedBigInteger(result)
     }
 
     /**
@@ -74,25 +87,32 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      */
     operator fun minus(other: UnsignedBigInteger): UnsignedBigInteger {
         if (other > this) throw ArithmeticException("negative number")
-        val result = StringBuilder()
-        val l = list
-        val dif = list.size - other.list.size
-        for (i in other.list.size - 1 downTo 0) {
-            if (l[i + dif] < other.list[i]) {
-                var j = i - 1
-                while (l[j + dif] == 0) {
-                    l[j + dif] = 9
-                    j--
-                }
-                l[j + dif]--
-                result.append((l[i + dif] + 10 - other.list[i]).toString())
-            } else
-                result.append((l[i + dif] - other.list[i]).toString())
+        val result = mutableListOf<Int>()
+        val dif = listOfDigits.size - other.listOfDigits.size
+        var flag = false
+        val l = listOfDigits.subList(dif, listOfDigits.size)
+        for (i in other.listOfDigits.size - 1 downTo 0) {
+            if (l[i] < other.listOfDigits[i]) {
+                val d = if (flag) 9 else 10
+                result.add(0, l[i] + d - other.listOfDigits[i])
+                flag = true
+            } else {
+                val p = if (flag) -1 else 0
+                result.add(0, l[i] + p - other.listOfDigits[i])
+                flag = false
+            }
         }
         for (i in dif - 1 downTo 0) {
-            result.append(l[i].toString())
+            if (flag) {
+                if (listOfDigits[i] == 0) {
+                    result.add(0, 9)
+                } else {
+                    result.add(0, listOfDigits[i] - 1)
+                    flag = false
+                }
+            } else result.add(0, listOfDigits[i])
         }
-        return UnsignedBigInteger(result.toString().reversed())
+        return UnsignedBigInteger(result)
     }
 
     /**
@@ -101,16 +121,15 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     operator fun times(other: UnsignedBigInteger): UnsignedBigInteger {
         var rem = 0
         var result = UnsignedBigInteger(0)
-        for (i in other.list.size - 1 downTo 0) {
-            var s: String
-            for (j in list.size - 1 downTo 0) {
-                s = ((other.list[i] * list[j] + rem) % 10).toString() +
-                        "0".repeat(list.size - 1 - j + other.list.size - 1 - i)
-                result += UnsignedBigInteger(s)
-                rem = (other.list[i] * list[j] + rem) / 10
+        for (i in other.listOfDigits.size - 1 downTo 0) {
+            for (j in listOfDigits.size - 1 downTo 0) {
+                result += UnsignedBigInteger(
+                    (other.listOfDigits[i] * listOfDigits[j] + rem) % 10,
+                    listOfDigits.size - 1 - j + other.listOfDigits.size - 1 - i
+                )
+                rem = (other.listOfDigits[i] * listOfDigits[j] + rem) / 10
             }
-            s = rem.toString() + "0".repeat(list.size + other.list.size - 1 - i)
-            result += UnsignedBigInteger(s)
+            result += UnsignedBigInteger(rem, listOfDigits.size + other.listOfDigits.size - 1 - i)
             rem = 0
         }
         return result
@@ -126,18 +145,18 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
         val t = UnsignedBigInteger(10)
         var num = 0
         var i = 0
-        val result = StringBuilder()
+        val result = mutableListOf<Int>()
         while (rem <= other) {
-            rem = rem * t + UnsignedBigInteger(list[i])
+            rem = rem * t + UnsignedBigInteger(listOfDigits[i])
             i++
         }
-        while (i <= (list.size - 1)) {
+        while (i <= (listOfDigits.size - 1)) {
             while (rem >= other * UnsignedBigInteger(num)) {
                 num++
             }
             num--
-            result.append(num.toString())
-            rem = (rem - UnsignedBigInteger(num) * other) * t + UnsignedBigInteger(list[i])
+            result.add(num)
+            rem = (rem - UnsignedBigInteger(num) * other) * t + UnsignedBigInteger(listOfDigits[i])
             num = 0
             i++
         }
@@ -145,8 +164,8 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
             num++
         }
         num--
-        result.append(num.toString())
-        return UnsignedBigInteger(result.toString())
+        result.add(num)
+        return UnsignedBigInteger(result)
     }
 
     /**
@@ -161,11 +180,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Сравнение на равенство (по контракту Any.equals)
      */
     override fun equals(other: Any?): Boolean {
-        if (other is UnsignedBigInteger && list.size == other.list.size) {
-            for (i in 0 until list.size) {
-                if (list[i] != other.list[i])
-                    return false
-            }
+        if (other is UnsignedBigInteger && listOfDigits == other.listOfDigits) {
             return true
         }
         return false
@@ -175,11 +190,11 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Сравнение на больше/меньше (по контракту Comparable.compareTo)
      */
     override fun compareTo(other: UnsignedBigInteger): Int {
-        if (list.size > other.list.size) return 1
-        if (list.size < other.list.size) return -1
-        for (i in 0 until list.size) {
-            if (list[i] > other.list[i]) return 1
-            if (list[i] < other.list[i]) return -1
+        if (listOfDigits.size > other.listOfDigits.size) return 1
+        if (listOfDigits.size < other.listOfDigits.size) return -1
+        for (i in 0 until listOfDigits.size) {
+            if (listOfDigits[i] > other.listOfDigits[i]) return 1
+            if (listOfDigits[i] < other.listOfDigits[i]) return -1
         }
         return 0
     }
@@ -189,8 +204,8 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      */
     override fun toString(): String {
         val result = StringBuilder()
-        for (i in 0 until list.size)
-            result.append(list[i].toString())
+        for (i in 0 until listOfDigits.size)
+            result.append(listOfDigits[i].toString())
         return result.toString()
     }
 
@@ -199,13 +214,13 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Если число не влезает в диапазон Int, бросить ArithmeticException
      */
     fun toInt(): Int {
-        if (this > UnsignedBigInteger(Int.MAX_VALUE)) throw ArithmeticException("number > MaxValue")
+        if (this > maxValueInt) throw ArithmeticException("number > MaxValue")
         var result = 0
-        for (i in list) {
+        for (i in listOfDigits) {
             result = result * 10 + i
         }
         return result
     }
 
-    override fun hashCode(): Int = list.hashCode()
+    override fun hashCode(): Int = listOfDigits.hashCode()
 }

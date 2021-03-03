@@ -16,8 +16,14 @@ internal class UnsignedBigIntegerTest {
         assertEquals(UnsignedBigInteger("0"), UnsignedBigInteger("0") + UnsignedBigInteger(0))
         assertEquals(UnsignedBigInteger("13254"), UnsignedBigInteger(12345) + UnsignedBigInteger("909"))
         assertEquals(UnsignedBigInteger("2"), UnsignedBigInteger("1") + UnsignedBigInteger("01"))
-        assertEquals(UnsignedBigInteger("1245540515840"),UnsignedBigInteger("386547056640") + UnsignedBigInteger("858993459200"))
-        assertEquals(UnsignedBigInteger("31310311587840"),UnsignedBigInteger("1245540515840") + UnsignedBigInteger("30064771072000"))
+        assertEquals(
+            UnsignedBigInteger("1245540515840"),
+            UnsignedBigInteger("386547056640") + UnsignedBigInteger("858993459200")
+        )
+        assertEquals(
+            UnsignedBigInteger("31310311587840"),
+            UnsignedBigInteger("1245540515840") + UnsignedBigInteger("30064771072000")
+        )
 
     }
 
@@ -31,7 +37,13 @@ internal class UnsignedBigIntegerTest {
         }
         assertEquals(UnsignedBigInteger("9087654329"), UnsignedBigInteger("9087654329") - UnsignedBigInteger(0))
         assertEquals(UnsignedBigInteger(0), UnsignedBigInteger(0) - UnsignedBigInteger(0))
+        assertEquals(UnsignedBigInteger("9999"), UnsignedBigInteger("10001") - UnsignedBigInteger(2))
+        assertEquals(
+            UnsignedBigInteger("1266874889"),
+            UnsignedBigInteger("18446744073") - UnsignedBigInteger("17179869184")
+        )
     }
+
 
     @Test
     @Tag("12")
@@ -94,6 +106,7 @@ internal class UnsignedBigIntegerTest {
         assertEquals(UnsignedBigInteger(123456789), UnsignedBigInteger("123456789"))
         assertFalse(UnsignedBigInteger(123) != UnsignedBigInteger("123"))
         assertFalse(UnsignedBigInteger(1) == UnsignedBigInteger("123"))
+        assertEquals(UnsignedBigInteger(123456789), UnsignedBigInteger("000000123456789"))
     }
 
     @Test
