@@ -150,7 +150,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
             rem = rem * t + UnsignedBigInteger(listOfDigits[i])
             i++
         }
-        while (i <= (listOfDigits.size - 1)) {
+        repeat(listOfDigits.size - i) {
             while (rem >= other * UnsignedBigInteger(num)) {
                 num++
             }
@@ -158,7 +158,6 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
             result.add(num)
             rem = (rem - UnsignedBigInteger(num) * other) * t + UnsignedBigInteger(listOfDigits[i])
             num = 0
-            i++
         }
         while (rem >= other * UnsignedBigInteger(num)) {
             num++
