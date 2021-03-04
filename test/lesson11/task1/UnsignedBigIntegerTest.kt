@@ -81,6 +81,9 @@ internal class UnsignedBigIntegerTest {
             UnsignedBigInteger("18446744073709551619") / UnsignedBigInteger("4294967296")
         )
         assertEquals(UnsignedBigInteger(0), UnsignedBigInteger(0) / UnsignedBigInteger(555))
+        assertEquals(
+            UnsignedBigInteger("6497725"),
+            UnsignedBigInteger("123456789") / UnsignedBigInteger("19"))
     }
 
     @Test
